@@ -30,7 +30,7 @@ func (c *UserDao) GetOne(uid uint64) (v *User, err error) {
 		c.db,
 		v,
 		querySQL,
-		appModule,
+		uid,
 	)
 
 	if err != nil {
