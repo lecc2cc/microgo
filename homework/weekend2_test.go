@@ -30,7 +30,7 @@ func TestUserDao_GetOne(t *testing.T) {
 }
 
 func initDB() (db *sqlx.DB, err error) {
-	dsn := "root:root@tcp(127.0.0.1:3306)/sql_test?charset=utf8mb4&parseTime=True"
+	dsn := "root:root@tcp(127.0.0.1:3306)/vip_fun?charset=utf8mb4&parseTime=True"
 	db, err = sqlx.Connect("mysql", dsn)
 	if err != nil {
 		err = xerrors.Wrap(err, "initDB error")
