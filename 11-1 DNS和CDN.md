@@ -24,3 +24,28 @@ DNS（Domain Name System，域名系统），DNS 服务用于在网络请求时�
 
 客户端到 *Local DNS* 服务器，*Local DNS* 与上级 *DNS* 服务器之间属于递归查询；*DNS* 服务器与根 *DNS* 服务器之前属于迭代查询。
 
+![image](https://github.com/lecc2cc/microgo/blob/master/images/11-1-dns-parser-2021-06-28-23.png?raw=true)
+
+```
+1.用户在 Web 浏览器中键入 “example.com”，查询传输到 Internet 中，并被 DNS 递归解析器接收。
+
+2.接着，解析器查询 DNS 根域名服务器（.）。
+
+3.然后，根服务器使用存储其域信息的顶级域（TLD）DNS 服务器（例如 .com 或 .net）的地址响应该解析器。在搜索 example.com 时，我们的请求指向 .com TLD。
+
+4.然后，解析器向 .com TLD 发出请求。
+
+5.TLD 服务器随后使用该域的域名服务器 example.com 的 IP 地址进行响应。
+
+6.最后，递归解析器将查询发送到域的域名服务器。
+
+7.example.com 的 IP 地址而后从域名服务器返回解析器。
+
+8.然后 DNS 解析器使用最初请求的域的 IP 地址响应 Web 浏览器。
+```
+
+#### DNS 问题
+
+**Local DNS 劫持**
+
+Local DNS 把域名劫持到其他域名，实现其不可告人的目的。
