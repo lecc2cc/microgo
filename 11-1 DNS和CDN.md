@@ -49,3 +49,30 @@ DNS（Domain Name System，域名系统），DNS 服务用于在网络请求时�
 **Local DNS 劫持**
 
 Local DNS 把域名劫持到其他域名，实现其不可告人的目的。
+
+![image](https://github.com/lecc2cc/microgo/blob/master/images/11-1-dns-6-2021-06-28-23.png?raw=true)
+
+**域名缓存**
+
+域名缓存就是 LocalDNS 缓存了业务的域名的解析结果，不向权威 DNS 发起递归。
+
+![image](https://github.com/lecc2cc/microgo/blob/master/images/11-1-dns7-2021-06-28-23.png?raw=true)
+
++ 保证用户访问流量在本网内消化：国内的各互联网接入运营商的带宽资源、网间结算费用、*IDC* 机房分布、网内 *ICP* 资源分布等存在较大差异。为了保证网内用户的访问质量，同时减少跨网结算，运营商在网内搭建了内容缓存服务器，通过把域名强行指向内容缓存服务器的 *IP* 地址，就实现了把本地本网流量完全留在了本地的目的。
++ 推送广告：有部分 *LocalDNS* 会把部分域名解析结果的所指向的内容缓存，并替换成第三方广告联盟的广告。
+
+**域名解析转发**
+
+解析转发是指运营商自身不进行域名递归解析，而是把域名解析请求转发到其它运营商的递归 *DNS* 上的行为。
+
+![image](https://github.com/lecc2cc/microgo/blob/master/images/11-1-dns8-2021-06-28-23.png?raw=true)
+
+部分小运营商为了节省资源，就直接将解析请求转发到了其它运营的递归 LocalDNS 上去了。
+
+这样的直接后果就是权威 *DNS* 收到的域名解析请求的来源 *IP* 就成了其它运营商的 *IP*，最终导致用户流量被导向了错误的 *IDC*，用户访问变慢。
+
+![image](https://github.com/lecc2cc/microgo/blob/master/images/11-1-dns9-2021-06-28-23.png?raw=true)
+
+LocalDNS 递归出口 NAT (`网络地址转换协议`)指的是运营商的 LocalDNS 按照标准的 DNS 协议进行递归，但是因为在网络上存在多出口且配置了目标路由 NAT，结果导致 LocalDNS 最终进行递归解析的时候的出口 IP 就有概率不为本网的 IP 地址。
+
++ 这样的直接后果就是 *DNS* 收到的域名解析请求的来源 *IP* 还是成了其它运营商的 *IP*，最终导致用户流量被导向了错误的 *IDC*，用户访问变慢。
