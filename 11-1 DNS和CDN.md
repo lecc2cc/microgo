@@ -106,3 +106,40 @@ HTTPDNS 利用 HTTP 协议与 DNS 服务器交互，代替了传统的基于 UDP
 
 另外，由于 DNS 服务器端获取的是真实客户端 IP 而非 Local DNS 的 IP，能够精确定位客户端地理位置、运营商信息，从而有效改进调度精确性。
 
+![image](https://github.com/lecc2cc/microgo/blob/master/images/11-1-httpdns-2021-06-30-23.png?raw=true)
+
+**HTTP DNS原理**
+
+由于 HTTP DNS 是通过 ip 直接请求 http获取服务器 A 记录地址，不存在向本地运营商询问 domain 解析过程，所以从根本避免了劫持问题。
+
+1. 平均访问延迟下降
+   + 由于是 *ip* 直接访问省掉了一次 *domain* 解析过程。
+2. 用户连接失败率下降
+   + 通过算法降低以往失败率过高的服务器排序
+   + 通过时间近期访问过的数据提高服务器排序
+   + 通过历史访问成功记录提高服务器排序
+
+![image](https://github.com/lecc2cc/microgo/blob/master/images/11-1-httpdns1-2021-06-30-23.png?raw=true)
+
+**优势**
+
+根治域名解析异常：由于绕过了运营商的LocalDNS，用户解析域名的请求通过 HTTP 协议直接透传到了 HTTPDNS 服务器 IP 上，用户在客户端的域名解析请求将不会遭受到域名解析异常的困扰。
+
++ 调度精准：*HTTPDNS* 能直接获取到用户 *IP*，通过结合 *IP* 地址库以及测速系统，可以保证将用户引导的访问最快的 *IDC* 节点上；
++ 实现成本低廉：接入 *HTTPDNS* 的业务仅需要对客户端接入层做少量改造，无需用户手机进行 *root* 或越狱；而且由于 *HTTP* 协议请求构造非常简单，兼容各版本的移动操作系统更不成问题；另外 *HTTPDNS* 的后端配置完全复用现有权威 *DNS* 配置，管理成本也非常低。
+
+![image](https://github.com/lecc2cc/microgo/blob/master/images/11-1-httpdns2-2021-06-30-23.png?raw=true)
+
+**HTTP DNS 服务的IP问题**
+
+如果只有一个 VIP，即可以增加 DNS 记录的 TTL，减少解析的延迟。
+
+Anycast 可以使用一个 IP，将数据路由到最近的一组服务器，通过 BGP 宣告这个 IP，但是这存在两个问题：
+
+- 如果某个节点承载过多的用户会过载
+- *BGP* 路由计算可能会导致连接重置
+
+因此一需要个 “稳定 Anycast” 技术来实现。
+
+![image](https://github.com/lecc2cc/microgo/blob/master/images/11-1-httpdns3-2021-06-30-23.png?raw=true)
+
